@@ -19,13 +19,20 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />   
             </intent-filter>
   
-            <!-- TODO - Add necessary intent filter information so that this
+            <!-- - Add necessary intent filter information so that this
                     Activity will accept Intents with the
                     action "android.intent.action.VIEW" and with an "http"
                     schemed URL -->
+                    
+              <intent-filter>
+			        <action android:name="android.intent.action.VIEW" />
+			        <data android:scheme="http" />
+			        <category android:name="android.intent.category.BROWSABLE" />
+					<category android:name="android.intent.category.DEFAULT" />
+    			</intent-filter>
         </activity>
     </application>
 

@@ -1,6 +1,7 @@
 package course.labs.fragmentslab;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,8 +27,10 @@ public class MainActivity extends Activity implements
 			mFriendsFragment = new FriendsFragment();
 
 			//TODO 1 - add the FriendsFragment to the fragment_container
+			FragmentTransaction trans = getFragmentManager().beginTransaction();
 			
-			
+			trans.add(R.id.fragment_container, mFriendsFragment); 
+			trans.commit();
 			
 
 		} else {
@@ -67,8 +70,10 @@ public class MainActivity extends Activity implements
 			//TODO 2 - replace the fragment_container with the FeedFragment
 			
 
-			
-
+			FragmentTransaction trans = getFragmentManager().beginTransaction();
+			trans.replace(R.id.fragment_container, mFeedFragment); 
+			trans.addToBackStack(null);
+			trans.commit();
 			// execute transaction now
 			getFragmentManager().executePendingTransactions();
 

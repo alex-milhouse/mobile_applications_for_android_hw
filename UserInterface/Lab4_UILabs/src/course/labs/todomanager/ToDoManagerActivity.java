@@ -13,9 +13,11 @@ import java.text.ParseException;
 import java.util.Date;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,32 +48,33 @@ public class ToDoManagerActivity extends ListActivity {
 		// Put divider between ToDoItems and FooterView
 		getListView().setFooterDividersEnabled(true);
 
-		// TODO - Inflate footerView for footer_view.xml file
-		TextView footerView = null;
+		//  - Inflate footerView for footer_view.xml file		
+		LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	    View row = inflater.inflate(R.layout.footer_view, getListView(), false);
+	    TextView footerView = (TextView) row.findViewById(R.id.footerView);
 
 
 		// NOTE: You can remove this block once you've implemented the assignment
 		if (null == footerView) {
 			return;
 		}
-		// TODO - Add footerView to ListView
-
-
-		
+		//  - Add footerView to ListView
+	    getListView().addFooterView(footerView);
         
-        
-		// TODO - Attach Listener to FooterView
+		//  - Attach Listener to FooterView
 		footerView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
 
-				//TODO - Implement OnClick().
+				// - Implement OnClick().
+				Intent addToDoActivityIntent = new Intent(ToDoManagerActivity.this, AddToDoActivity.class); 
+				startActivityForResult(addToDoActivityIntent, ADD_TODO_ITEM_REQUEST);
 			}
 		});
 
-		// TODO - Attach the adapter to this ListActivity's ListView
-		
+		//  - Attach the adapter to this ListActivity's ListView
+		getListView().setAdapter(mAdapter);
 	}
 
 	@Override
@@ -84,11 +87,11 @@ public class ToDoManagerActivity extends ListActivity {
 		// Create a new ToDoItem from the data Intent
 		// and then add it to the adapter
 
+		if (requestCode == ADD_TODO_ITEM_REQUEST && resultCode == RESULT_OK) {
+			ToDoItem newToDoItem = new ToDoItem(data);
+			mAdapter.add(newToDoItem);
 
-            
-            
-            
-		
+		}
 
 	}
 
