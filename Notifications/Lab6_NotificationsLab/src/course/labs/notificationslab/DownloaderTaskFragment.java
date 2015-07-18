@@ -40,20 +40,32 @@ public class DownloaderTaskFragment extends Fragment {
 		// Preserve across reconfigurations
 		setRetainInstance(true);
 
-		// TODO: Create new DownloaderTask that "downloads" data
+		//  Create new DownloaderTask that "downloads" data
+		
+		DownloaderTask downloads = new DownloaderTask();
 
 		
 		// TODO: Retrieve arguments from DownloaderTaskFragment
-		// Prepare them for use with DownloaderTask.
+        // Prepare them for use with DownloaderTask. 
+        Bundle args = getArguments();
+
+        //.getIntegerArrayList returns the value associated with the given key
+        ArrayList arrayList = args.getIntegerArrayList("friends");
+
+        //Create integer array for size of arrayList passed
+        Integer[] mResourceIds = new Integer[arrayList.size()];
+
+        //Initialize mResourceIds with values from arrayList
+        //arrayList must be cast to get Integer[], otherwise Object[] is returned
+        mResourceIds = (Integer[]) arrayList.toArray(mResourceIds);
 
 
-		
-		
-		
-		// TODO: Start the DownloaderTask
+        // TODO: Start the DownloaderTask 
+        downloads.execute(mResourceIds);
 
 		
 	}
+	
 
 	// Assign current hosting Activity to mCallback
 	// Store application context for use by downloadTweets()
@@ -79,26 +91,29 @@ public class DownloaderTaskFragment extends Fragment {
 		super.onDetach();
 		mCallback = null;
 	}
-
-	// TODO: Implement an AsyncTask subclass called DownLoaderTask.
+	//  Auto-generated method stub
+	// Implement an AsyncTask subclass called DownLoaderTask.
 	// This class must use the downloadTweets method (currently commented
 	// out). Ultimately, it must also pass newly available data back to
 	// the hosting Activity using the DownloadFinishedListener interface.
 
-	// public class DownloaderTask extends ...
-
-
-	
-	
-	
-	
-	
-	
-		// TODO: Uncomment this helper method
+	public class DownloaderTask extends AsyncTask<Integer, Void, String[]> {
+		// : Uncomment this helper method
 		// Simulates downloading Twitter data from the network
-
-/* 
-	 
+		
+		@Override
+		protected String[] doInBackground(Integer... params) {
+			// Auto-generated method stub
+			return downloadTweets(params);
+		}
+		
+		@Override
+		protected void onPostExecute(String[] result) {
+			if (mCallback != null){
+				mCallback.notifyDataRefreshed(result);
+			}
+		}
+		
 	  private String[] downloadTweets(Integer resourceIDS[]) {
 	 
 			final int simulatedDelay = 2000;
@@ -147,13 +162,13 @@ public class DownloaderTaskFragment extends Fragment {
 			return feeds;
 
 		}
-*/
+
 		// Uncomment this helper method.
 		// If necessary, notifies the user that the tweet downloads are
 		// complete. Sends an ordered broadcast back to the BroadcastReceiver in
 		// MainActivity to determine whether the notification is necessary.
 
-	/*
+	
 		private void notify(final boolean success) {
 
 			final Intent restartMainActivityIntent = new Intent(mContext,
@@ -183,21 +198,18 @@ public class DownloaderTaskFragment extends Fragment {
 						@Override
 						public void onReceive(Context context, Intent intent) {
 
-							// TODO: Check whether or not the MainActivity
-							// received the broadcast
+							// Check whether the result code is RESULT_OK
 
-							if (true || false) {
+							if (getResultCode() != Activity.RESULT_OK) {
 
-								// TODO: If not, create a PendingIntent using
-								// the
+								// If so, create a PendingIntent using the
 								// restartMainActivityIntent and set its flags
 								// to FLAG_UPDATE_CURRENT
-
-
-
-
-
-
+								
+								final PendingIntent pendingIntent = PendingIntent
+										.getBroadcast(context, 0,
+												restartMainActivityIntent,
+												PendingIntent.FLAG_UPDATE_CURRENT);							
 
 
 								// Uses R.layout.custom_notification for the
@@ -208,47 +220,54 @@ public class DownloaderTaskFragment extends Fragment {
 										mContext.getPackageName(),
 										R.layout.custom_notification);
 
-								// TODO: Set the notification View's text to
+								// Set the notification View's text to
 								// reflect whether the download completed
 								// successfully
+								String text = success ? successMsg : failMsg;
 
 
 
-
-								// TODO: Use the Notification.Builder class to
+								// Use the Notification.Builder class to
 								// create the Notification. You will have to set
 								// several pieces of information. You can use
 								// android.R.drawable.stat_sys_warning
 								// for the small icon. You should also
 								// setAutoCancel(true).
 
-								Notification.Builder notificationBuilder = null;
+								Notification.Builder notificationBuilder =  new Notification.Builder(context)
+									.setTicker("Notifications Lab")
+									.setContentIntent(pendingIntent)
+									.setSmallIcon(android.R.drawable.stat_sys_warning)
+									.setAutoCancel(true)
+									.setContent(mContentView)
+									.setContentText(text);
 
-								// TODO: Send the notification
-
-
-
-
+								// : Send the notification
+								NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+								mNotificationManager.notify(MY_NOTIFICATION_ID, notificationBuilder.build());
+								
 
 
 								Toast.makeText(mContext, notificationSentMsg,
 										Toast.LENGTH_LONG).show();
 
 							} else {
-								Toast.makeText(mContext,
-										success ? successMsg : failMsg,
-										Toast.LENGTH_LONG).show();
-							}
+							       for (int c=0; c < 3; c++){
+							           Toast.makeText(mContext,
+							                          success ? successMsg : failMsg,
+							                          Toast.LENGTH_LONG).show();
+							       }
+							   }
 						}
 					}, null, 0, null, null);
 		}
 
-*/
+
 	
 		// Uncomment this helper method
 		// Saves the tweets to a file
 	
-/*	
+
 		private void saveTweetsToFile(String[] result) {
 			PrintWriter writer = null;
 			try {
@@ -268,17 +287,5 @@ public class DownloaderTaskFragment extends Fragment {
 				}
 			}
 		}
-*/
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 }
